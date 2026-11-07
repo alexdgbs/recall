@@ -1,5 +1,8 @@
 import { useState, type ReactNode } from "react";
 import { isValidUsername, normalizeUsername, useRecall } from "../state";
+import { challenges, questions } from "../data";
+import { TOPICS } from "../domain";
+import { MAX_BACKUP_CHARS } from "../config";
 import { Icon } from "../components/Icon";
 import { Arrow, Back, tryRestore } from "./shared";
 
@@ -97,7 +100,10 @@ export function Onboarding() {
             navegador. Todo se guarda solo en este dispositivo: sin cuentas
             ni servidores.
           </p>
-          <p>12 áreas · 91 preguntas · 9 retos de código</p>
+          <p>
+            {TOPICS.length} áreas · {questions.length} preguntas ·{" "}
+            {challenges.length} retos de código
+          </p>
         </div>
         <div className="onboard-actions split">
           <button className="text-action" onClick={() => setStep(5)}>
@@ -131,7 +137,7 @@ export function Onboarding() {
           </p>
           <div className="card restore-panel">
             <textarea
-              maxLength={120000}
+              maxLength={MAX_BACKUP_CHARS}
               value={backup}
               onChange={(e) => setBackup(e.target.value)}
               placeholder="Pega aquí tu código de respaldo..."

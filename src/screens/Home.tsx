@@ -99,7 +99,7 @@ export function Home({
           return (
             <div className="topic-progress-item" key={topic}>
               <div className="topic-progress-head">
-                <strong>{topicMeta[i][0]}</strong>
+                <strong>{topicMeta[topic].title}</strong>
                 <span>
                   {item.answered
                     ? `${item.correct} de ${item.answered} correctas`
@@ -113,11 +113,11 @@ export function Home({
       </div>
       <div className="section-head">
         <h3>Qué practicar</h3>
-        <span>12 áreas</span>
+        <span>{TOPICS.length} áreas</span>
       </div>
       <div className="topics">
         {TOPICS.map((topic, i) => {
-          const meta = topicMeta[i];
+          const meta = topicMeta[topic];
           return (
             <button
               className="topic"
@@ -126,14 +126,14 @@ export function Home({
             >
               <div className="topic-top">
                 <div className="topic-icon">
-                  <Icon name={meta[2]} />
+                  <Icon name={meta.icon} />
                 </div>
                 <span className="topic-num">
                   {String(i + 1).padStart(2, "0")}
                 </span>
               </div>
-              <strong>{meta[0]}</strong>
-              <small>{meta[1]}</small>
+              <strong>{meta.title}</strong>
+              <small>{meta.desc}</small>
             </button>
           );
         })}

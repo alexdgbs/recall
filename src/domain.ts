@@ -14,6 +14,22 @@ export const TOPICS = [
   "Algoritmos",
 ] as const;
 export type Topic = (typeof TOPICS)[number];
+// Etiqueta visible por tema: la clave interna sigue sin acento ("Metodos")
+// para no romper los datos guardados; lo que se muestra lleva acento.
+export const TOPIC_LABELS: Record<Topic, string> = {
+  Fundamentos: "Fundamentos",
+  Control: "Control",
+  Bucles: "Bucles",
+  Arrays: "Arrays",
+  Metodos: "Métodos",
+  Funciones: "Funciones",
+  Objetos: "Objetos",
+  Colecciones: "Colecciones",
+  Async: "Async",
+  DOM: "DOM",
+  Errores: "Errores",
+  Algoritmos: "Algoritmos",
+};
 type Count = { answered: number; correct: number };
 export interface RecallState {
   version: 2;
@@ -31,6 +47,8 @@ export interface RecallState {
   codeStats: { attempts: number; passed: number; completed: string[] };
   updatedAt: number;
 }
+export const topicLabel = (group: string) =>
+  (TOPIC_LABELS as Record<string, string>)[group] ?? group;
 export const localDate = (offset = 0) => {
   const d = new Date();
   d.setDate(d.getDate() + offset);

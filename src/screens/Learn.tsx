@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { concepts } from "../data";
+import { topicLabel } from "../domain";
 
 export function Learn() {
   const [term, setTerm] = useState("");
@@ -26,7 +27,7 @@ export function Learn() {
           <article className="card learn-card" key={c.name}>
             <div className="learn-card-head">
               <h3>{c.name}</h3>
-              <span className="tag">{c.group}</span>
+              <span className="tag">{topicLabel(c.group)}</span>
             </div>
             <p>{c.summary}</p>
             <div className="tags">

@@ -1,6 +1,7 @@
 import type { Difficulty } from "../data";
+import type { Topic } from "../domain";
 import { readBackup } from "../services/backup";
-import { Icon } from "../components/Icon";
+import { Icon, type IconName } from "../components/Icon";
 
 export type View = "home" | "learn" | "practice" | "quiz" | "code" | "profile";
 export const label = (value: Difficulty) =>
@@ -22,20 +23,73 @@ export const tryRestore = (
 };
 export const Arrow = () => <Icon name="arrow" />;
 export const Back = () => <Icon name="back" />;
-export const topicMeta = [
-  ["Fundamentos", "let · const · tipos · ===", "fundamentals"],
-  ["Condicionales", "if · else · switch · ternario", "control"],
-  ["Bucles", "for · while · for...of · for...in", "loops"],
-  ["Arrays", "slice · splice · push · pop", "arrays"],
-  ["Métodos", "map · filter · find · reduce", "methods"],
-  ["Funciones", "function · arrow · callback", "functions"],
-  ["Objetos", "keys · values · destructuring", "objects"],
-  ["Set y Map", "unique · add · get · set", "collections"],
-  ["Asincronía", "Promise · async · await", "async"],
-  ["DOM y eventos", "selector · click · textContent", "dom"],
-  ["Errores", "try · catch · throw", "errors"],
-  ["Algoritmos", "buscar · contar · duplicados · Big O", "algorithms"],
-] as const;
+// Metadatos por tema, por clave y no por índice: si se reordena TOPICS,
+// cada tema sigue con su título, su descripción y su icono.
+export const topicMeta: Record<
+  Topic,
+  { title: string; desc: string; icon: IconName }
+> = {
+  Fundamentos: {
+    title: "Fundamentos",
+    desc: "let · const · tipos · ===",
+    icon: "fundamentals",
+  },
+  Control: {
+    title: "Condicionales",
+    desc: "if · else · switch · ternario",
+    icon: "control",
+  },
+  Bucles: {
+    title: "Bucles",
+    desc: "for · while · for...of · for...in",
+    icon: "loops",
+  },
+  Arrays: {
+    title: "Arrays",
+    desc: "slice · splice · push · pop",
+    icon: "arrays",
+  },
+  Metodos: {
+    title: "Métodos",
+    desc: "map · filter · find · reduce",
+    icon: "methods",
+  },
+  Funciones: {
+    title: "Funciones",
+    desc: "function · arrow · callback",
+    icon: "functions",
+  },
+  Objetos: {
+    title: "Objetos",
+    desc: "keys · values · destructuring",
+    icon: "objects",
+  },
+  Colecciones: {
+    title: "Set y Map",
+    desc: "unique · add · get · set",
+    icon: "collections",
+  },
+  Async: {
+    title: "Asincronía",
+    desc: "Promise · async · await",
+    icon: "async",
+  },
+  DOM: {
+    title: "DOM y eventos",
+    desc: "selector · click · textContent",
+    icon: "dom",
+  },
+  Errores: {
+    title: "Errores",
+    desc: "try · catch · throw",
+    icon: "errors",
+  },
+  Algoritmos: {
+    title: "Algoritmos",
+    desc: "buscar · contar · duplicados · Big O",
+    icon: "algorithms",
+  },
+};
 export const shuffle = <T,>(items: T[]) => {
   const copy = [...items];
   for (let i = copy.length - 1; i > 0; i--) {
