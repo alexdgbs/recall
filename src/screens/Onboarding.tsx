@@ -1,8 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { isValidUsername, normalizeUsername, useRecall } from "../state";
-import { createBackup, readBackup } from "../services/backup";
 import { Icon } from "../components/Icon";
-import { Arrow, Back } from "./shared";
+import { Arrow, Back, tryRestore } from "./shared";
 
 function Dots({ step }: { step: number }) {
   return (
@@ -50,14 +49,8 @@ export function Onboarding() {
     setError("");
     setStep(2);
   };
-  const restoreData = () => {
-    try {
-      restore(readBackup(backup.trim()));
-      setBackupStatus("Datos restaurados correctamente.");
-    } catch {
-      setBackupStatus("Ese código no es válido o está incompleto.");
-    }
-  };
+  const restoreData = () =>
+    setBackupStatus(tryRestore(restore, backup));
   if (step === 0)
     return (
       <section className="screen onboarding active">
@@ -69,6 +62,13 @@ export function Onboarding() {
           <div className="onboard-content">
             <p className="eyebrow">RECALL</p>
             <h1>Bienvenido.</h1>
+            <p>
+              Aprende JavaScript, practícalo y recuérdalo. Quiz por temas,
+              referencia rápida y retos de código con tests que corren en tu
+              navegador. Todo se guarda solo en este dispositivo: sin cuentas
+              ni servidores.
+            </p>
+            <p>12 áreas · 91 preguntas · 9 retos de código</p>
           </div>
           <div className="onboard-actions split">
             <button className="text-action" onClick={() => setStep(5)}>
