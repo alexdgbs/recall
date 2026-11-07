@@ -6,8 +6,8 @@ Demo en vivo: https://recall-one-orcin.vercel.app
 
 ## Qué hace
 
-- **Quiz por temas**: 12 áreas de JavaScript (Fundamentos, Control, Bucles, Arrays, Métodos, Funciones, Objetos, Colecciones, Async, DOM, Errores y Algoritmos), con 91 preguntas en tres dificultades: básico, intermedio y prueba técnica. Cada respuesta trae su explicación.
-- **Referencia rápida**: 38 conceptos con resumen, qué devuelven, si modifican el original y un ejemplo de código.
+- **Quiz por temas**: 12 áreas de JavaScript (Fundamentos, Control, Bucles, Arrays, Métodos, Funciones, Objetos, Colecciones, Async, DOM, Errores y Algoritmos), con 118 preguntas en tres dificultades: básico, intermedio y prueba técnica. Cada respuesta trae su explicación.
+- **Referencia rápida**: 36 conceptos con resumen, qué devuelven, si modifican el original y un ejemplo de código.
 - **Retos de código**: 9 retos (3 por dificultad) en un editor dentro de la app. Tu solución se ejecuta en un Web Worker con límite de tiempo y de caracteres, y los tests te dicen qué pasó.
 - **Repaso de errores**: las preguntas que fallas se guardan y puedes repasarlas después, sin importar la dificultad activa.
 - **Progreso local**: sesiones, respuestas correctas, precisión y racha diaria se guardan en `localStorage` (clave `js_practice_local_v1`). El código de respaldo (`RCL2-...`) permite llevar tu progreso a otro dispositivo.

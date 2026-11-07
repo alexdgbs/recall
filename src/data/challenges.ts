@@ -191,7 +191,7 @@ export const challenges: Challenge[] = [
     functionName: "flattenOne",
     template: "function flattenOne(arr) {\n  return [];\n}",
     tests: [
-      { args: [[[1, [2, 3]], 4]], expected: [1, 2, 3, 4] },
+      { args: [[1, [2, 3], 4]], expected: [1, 2, 3, 4] },
       { args: [[]], expected: [] },
       { args: [[[1], [2], [3]]], expected: [1, 2, 3] },
       { args: [[1, 2]], expected: [1, 2] },
