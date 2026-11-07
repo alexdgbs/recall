@@ -1,4 +1,5 @@
 import type { RecallState } from "../domain";
+import { MAX_BACKUP_CHARS } from "../config";
 const BACKUP_PREFIX = "RCL2-";
 const LEGACY_PREFIX = "RCL1-";
 const encode = (value: string) => {
@@ -20,7 +21,7 @@ const decode = (value: string) => {
 export const createBackup = (state: RecallState) =>
   BACKUP_PREFIX + encode(JSON.stringify(state));
 export const readBackup = (raw: string): unknown => {
-  if (!raw || raw.length > 120000) throw new Error("Código inválido");
+  if (!raw || raw.length > MAX_BACKUP_CHARS) throw new Error("Código inválido");
   const prefix = raw.startsWith(BACKUP_PREFIX)
     ? BACKUP_PREFIX
     : raw.startsWith(LEGACY_PREFIX)

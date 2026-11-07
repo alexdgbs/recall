@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import "../assets/css/styles.css";
+import { PHONE_HEIGHT, PHONE_WIDTH } from "./config";
 import { useRecall } from "./state";
 import {
   CodeMode,
@@ -25,25 +26,25 @@ export default function App() {
   // la ventana y se pasa como estilo de React, sin tocar el DOM a mano.
   const [wide, setWide] = useState(
     () =>
-      typeof matchMedia === "function" &&
-      matchMedia("(min-width: 901px)").matches,
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(min-width: 901px)").matches,
   );
   const [scale, setScale] = useState(1);
   useEffect(() => {
     const fit = () => {
-      setWide(matchMedia("(min-width: 901px)").matches);
-      setScale(Math.min(1, (innerHeight - 32) / 844));
+      setWide(window.matchMedia("(min-width: 901px)").matches);
+      setScale(Math.min(1, (window.innerHeight - 32) / PHONE_HEIGHT));
     };
     fit();
-    addEventListener("resize", fit, { passive: true });
-    return () => removeEventListener("resize", fit);
+    window.addEventListener("resize", fit, { passive: true });
+    return () => window.removeEventListener("resize", fit);
   }, []);
   const frameStyle = (
     wide
       ? {
           "--phone-scale": String(scale),
-          width: `${390 * scale}px`,
-          height: `${844 * scale}px`,
+          width: `${PHONE_WIDTH * scale}px`,
+          height: `${PHONE_HEIGHT * scale}px`,
         }
       : undefined
   ) as CSSProperties | undefined;

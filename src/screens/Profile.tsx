@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useRecall } from "../state";
 import { createBackup } from "../services/backup";
+import { MAX_BACKUP_CHARS } from "../config";
 import { label, tryRestore, type View } from "./shared";
 
 export function Profile({ go }: { go: (view: View) => void }) {
@@ -78,7 +79,7 @@ export function Profile({ go }: { go: (view: View) => void }) {
       <div className="backup-box">
         <textarea
           className="backup-code"
-          maxLength={120000}
+          maxLength={MAX_BACKUP_CHARS}
           value={backup}
           onChange={(e) => setBackup(e.target.value)}
           placeholder="Genera o pega un código..."

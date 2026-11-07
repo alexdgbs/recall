@@ -66,6 +66,8 @@ button {
   position: relative;
   overflow: hidden;
 }
+/* Marco de teléfono: mismo tamaño que PHONE_WIDTH/PHONE_HEIGHT en
+   src/config.ts (el CSS no puede importar constantes de TS). */
 .phone-frame {
   --phone-scale: 1;
   width: 390px;

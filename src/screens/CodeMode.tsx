@@ -1,5 +1,6 @@
 import { useState, type KeyboardEvent } from "react";
 import { challenges } from "../data";
+import { MAX_CODE_CHARS } from "../config";
 import { useRecall } from "../state";
 import { runCode, type TestResult } from "../services/codeRunner";
 import { Back, formatValue, label } from "./shared";
@@ -13,6 +14,7 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
   const challenge = list[index];
   const [code, setCode] = useState(challenge?.template ?? "");
   const [results, setResults] = useState<TestResult[]>([]);
+  const [running, setRunning] = useState(false);
   const [status, setStatus] = useState(
     "Escribe tu solución y ejecuta los tests.",
   );
@@ -45,6 +47,10 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
     });
   };
   const run = async () => {
+    // Un solo worker a la vez: un segundo clic mientras corre no arranca
+    // otra ejecución que pise el resultado de la primera.
+    if (running) return;
+    setRunning(true);
     setStatus("Ejecutando…");
     try {
       const output = await runCode(code, challenge);
@@ -63,6 +69,8 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
       setStatus(
         error instanceof Error ? error.message : "No se pudo ejecutar.",
       );
+    } finally {
+      setRunning(false);
     }
   };
   return (
@@ -94,7 +102,7 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
         </div>
         <textarea
           className="code-editor"
-          maxLength={10000}
+          maxLength={MAX_CODE_CHARS}
           value={code}
           onChange={(e) => setCode(e.target.value)}
           onKeyDown={handleTab}
@@ -107,8 +115,8 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
         >
           Reiniciar
         </button>
-        <button className="white-btn" onClick={run}>
-          Ejecutar tests
+        <button className="white-btn" onClick={run} disabled={running}>
+          {running ? "Ejecutando…" : "Ejecutar tests"}
         </button>
       </div>
       <div

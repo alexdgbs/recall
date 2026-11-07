@@ -138,12 +138,13 @@ export function RecallProvider({ children }: { children: ReactNode }) {
           stats: { ...s.stats, sessions: s.stats.sessions + 1 },
         })),
       registerCodeAttempt: (id, passed) => {
-        let first = false;
+        // Si es la primera vez que se pasa este reto, se marca aquí, con el
+        // estado actual; el actualizador solo transforma, no escribe fuera.
+        const first = passed && !state.codeStats.completed.includes(id);
         commit((s) => {
           const n = structuredClone(s);
           n.codeStats.attempts++;
           if (passed && !n.codeStats.completed.includes(id)) {
-            first = true;
             touch(n);
             n.activity.daily.answers++;
             n.codeStats.completed.push(id);

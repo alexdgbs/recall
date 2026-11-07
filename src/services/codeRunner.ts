@@ -1,4 +1,5 @@
 import type { Challenge } from "../data";
+import { MAX_CODE_CHARS } from "../config";
 export interface TestResult {
   pass: boolean;
   actual?: unknown;
@@ -9,9 +10,11 @@ export function runCode(
   code: string,
   challenge: Challenge,
 ): Promise<TestResult[]> {
-  if (code.length > 10000)
+  if (code.length > MAX_CODE_CHARS)
     return Promise.reject(
-      new Error("El código supera el límite de 10,000 caracteres."),
+      new Error(
+        `El código supera el límite de ${MAX_CODE_CHARS.toLocaleString("es-MX")} caracteres.`,
+      ),
     );
   return new Promise((resolve, reject) => {
     const workerSource = `
