@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useRecall } from "../state";
-import { createBackup, readBackup } from "../services/backup";
-import { label, type View } from "./shared";
+import { createBackup } from "../services/backup";
+import { label, tryRestore, type View } from "./shared";
 
 export function Profile({ go }: { go: (view: View) => void }) {
   const { state, accuracy, streak, setGoal, restore, reset } = useRecall();
@@ -12,14 +12,7 @@ export function Profile({ go }: { go: (view: View) => void }) {
     setBackup(createBackup(state));
     setStatus("Código generado. Incluye perfil, progreso y preferencias.");
   };
-  const restoreData = () => {
-    try {
-      restore(readBackup(backup.trim()));
-      setStatus("Datos restaurados correctamente.");
-    } catch {
-      setStatus("Ese código no es válido o está incompleto.");
-    }
-  };
+  const restoreData = () => setStatus(tryRestore(restore, backup));
   return (
     <section className="screen active">
       <p className="eyebrow">PERFIL</p>

@@ -1,5 +1,5 @@
 import type { RecallState } from "../domain";
-export const BACKUP_PREFIX = "RCL2-";
+const BACKUP_PREFIX = "RCL2-";
 const LEGACY_PREFIX = "RCL1-";
 const encode = (value: string) => {
   const bytes = new TextEncoder().encode(value);

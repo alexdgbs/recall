@@ -1,4 +1,5 @@
 import type { Difficulty } from "../data";
+import { readBackup } from "../services/backup";
 import { Icon } from "../components/Icon";
 
 export type View = "home" | "learn" | "practice" | "quiz" | "code" | "profile";
@@ -8,6 +9,17 @@ export const label = (value: Difficulty) =>
     : value === "intermediate"
       ? "Intermedio"
       : "Básico";
+export const tryRestore = (
+  restore: (input: unknown) => void,
+  code: string,
+) => {
+  try {
+    restore(readBackup(code.trim()));
+    return "Datos restaurados correctamente.";
+  } catch {
+    return "Ese código no es válido o está incompleto.";
+  }
+};
 export const Arrow = () => <Icon name="arrow" />;
 export const Back = () => <Icon name="back" />;
 export const topicMeta = [

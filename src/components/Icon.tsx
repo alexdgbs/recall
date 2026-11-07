@@ -22,6 +22,19 @@ type IconName =
   | "errors"
   | "algorithms";
 export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
+  const bookIcon = (
+    <>
+      <path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3Z" />
+      <path d="M8 20a3 3 0 0 1 0-6h11" />
+    </>
+  );
+  const codeIcon = (
+    <>
+      <path d="m8 9-3 3 3 3" />
+      <path d="m16 9 3 3-3 3" />
+      <path d="m14 5-4 14" />
+    </>
+  );
   const content = {
     arrow: (
       <>
@@ -41,19 +54,8 @@ export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
         <path d="M18 6 6 18" />
       </>
     ),
-    book: (
-      <>
-        <path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3Z" />
-        <path d="M8 20a3 3 0 0 1 0-6h11" />
-      </>
-    ),
-    code: (
-      <>
-        <path d="m8 9-3 3 3 3" />
-        <path d="m16 9 3 3-3 3" />
-        <path d="m14 5-4 14" />
-      </>
-    ),
+    book: bookIcon,
+    code: codeIcon,
     chart: (
       <>
         <path d="M5 19V9M12 19V5M19 19v-7" />
@@ -65,17 +67,8 @@ export function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
         <path d="M6 10v10h12V10" />
       </>
     ),
-    learn: (
-      <>
-        <path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3Z" />
-        <path d="M8 20a3 3 0 0 1 0-6h11" />
-      </>
-    ),
-    practice: (
-      <>
-        <path d="m8 9-3 3 3 3M16 9l3 3-3 3M14 5l-4 14" />
-      </>
-    ),
+    learn: bookIcon,
+    practice: codeIcon,
     profile: (
       <>
         <circle cx="12" cy="8" r="4" />
