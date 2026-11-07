@@ -141,4 +141,60 @@ export const challenges: Challenge[] = [
       { args: [[-4, -1, 0, 8], -4], expected: 0 },
     ],
   },
+  {
+    id: "sum-evens",
+    difficulty: "basic",
+    title: "Suma los pares",
+    description:
+      "Completa sumEvens(nums) para devolver la suma de los números pares del array.",
+    functionName: "sumEvens",
+    template: "function sumEvens(nums) {\n  return 0;\n}",
+    tests: [
+      { args: [[1, 2, 3, 4]], expected: 6 },
+      { args: [[]], expected: 0 },
+      { args: [[1, 3, 5]], expected: 0 },
+      { args: [[2, 2]], expected: 4 },
+    ],
+  },
+  {
+    id: "group-by-length",
+    difficulty: "intermediate",
+    title: "Agrupa por longitud",
+    description:
+      "Completa groupByLength(words) para devolver un objeto donde cada clave es la longitud de la palabra y el valor es el array de palabras con esa longitud.",
+    functionName: "groupByLength",
+    template: "function groupByLength(words) {\n  return {};\n}",
+    tests: [
+      {
+        args: [["a", "bb", "c"]],
+        expected: {
+          "1": ["a", "c"],
+          "2": ["bb"],
+        },
+      },
+      { args: [[]], expected: {} },
+      {
+        args: [["sol", "luna"]],
+        expected: {
+          "3": ["sol"],
+          "4": ["luna"],
+        },
+      },
+    ],
+  },
+  {
+    id: "flatten-one",
+    difficulty: "technical",
+    title: "Aplana un nivel",
+    description:
+      "Completa flattenOne(arr) para devolver un array nuevo con un nivel de anidación menos, sin modificar el original.",
+    functionName: "flattenOne",
+    template: "function flattenOne(arr) {\n  return [];\n}",
+    tests: [
+      { args: [[[1, [2, 3]], 4]], expected: [1, 2, 3, 4] },
+      { args: [[]], expected: [] },
+      { args: [[[1], [2], [3]]], expected: [1, 2, 3] },
+      { args: [[1, 2]], expected: [1, 2] },
+    ],
+  },
 ];

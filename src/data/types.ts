@@ -1,4 +1,5 @@
 export type Difficulty = "basic" | "intermediate" | "technical";
+import type { Topic } from "../domain";
 export interface Concept {
   name: string;
   group: string;
@@ -10,7 +11,7 @@ export interface Concept {
 export interface Question {
   id: string;
   difficulty: Difficulty;
-  topic: string;
+  topic: Topic;
   concept: string;
   type: string;
   q: string;

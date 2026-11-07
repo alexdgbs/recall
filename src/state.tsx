@@ -118,10 +118,10 @@ export function RecallProvider({ children }: { children: ReactNode }) {
           touch(n);
           n.activity.daily.answers++;
           n.stats.totalAnswers++;
-          n.topicStats[question.topic as Topic].answered++;
+          n.topicStats[question.topic].answered++;
           if (correct) {
             n.stats.correctAnswers++;
-            n.topicStats[question.topic as Topic].correct++;
+            n.topicStats[question.topic].correct++;
             n.errors = n.errors.filter((id) => id !== question.id);
           } else if (!n.errors.includes(question.id))
             n.errors.push(question.id);
@@ -133,11 +133,12 @@ export function RecallProvider({ children }: { children: ReactNode }) {
           stats: { ...s.stats, sessions: s.stats.sessions + 1 },
         })),
       registerCodeAttempt: (id, passed) => {
-        const first = passed && !state.codeStats.completed.includes(id);
+        let first = false;
         commit((s) => {
           const n = structuredClone(s);
           n.codeStats.attempts++;
-          if (first) {
+          if (passed && !n.codeStats.completed.includes(id)) {
+            first = true;
             touch(n);
             n.activity.daily.answers++;
             n.codeStats.completed.push(id);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type KeyboardEvent } from "react";
 import { challenges } from "../data";
 import { useRecall } from "../state";
 import { runCode, type TestResult } from "../services/codeRunner";
@@ -23,6 +23,18 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
     setResults([]);
     setStatus("Escribe tu solución y ejecuta los tests.");
   };
+  const handleTab = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key !== "Tab") return;
+    e.preventDefault();
+    const el = e.currentTarget;
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    setCode(code.slice(0, start) + "  " + code.slice(end));
+    requestAnimationFrame(() => {
+      el.focus();
+      el.setSelectionRange(start + 2, start + 2);
+    });
+  };
   const run = async () => {
     setStatus("Ejecutando…");
     try {
@@ -45,7 +57,7 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
     }
   };
   return (
-    <section className="screen active">
+    <section className="screen no-nav active">
       <div className="quiz-head">
         <button className="icon-btn" onClick={onClose} aria-label="Volver">
           <Back />
@@ -76,6 +88,7 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
           maxLength={10000}
           value={code}
           onChange={(e) => setCode(e.target.value)}
+          onKeyDown={handleTab}
         />
       </div>
       <div className="code-actions">

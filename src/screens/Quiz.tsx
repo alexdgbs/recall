@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { concepts, questions, type Difficulty, type Question } from "../data";
 import { useRecall } from "../state";
 import { Icon } from "../components/Icon";
@@ -17,17 +17,25 @@ export function Quiz({
   const [index, setIndex] = useState(0);
   const [choice, setChoice] = useState<number | null>(null);
   const [score, setScore] = useState(0);
+  const [answered, setAnswered] = useState(0);
+  const finished = useRef(false);
+  const close = () => {
+    if (answered > 0 && !finished.current) finishSession();
+    onClose();
+  };
   const q = pool[index];
   const concept = concepts.find((c) => c.name === q?.concept);
   const select = (i: number) => {
     if (choice !== null || !q) return;
     setChoice(i);
+    setAnswered((a) => a + 1);
     const ok = i === q.correct;
     if (ok) setScore((s) => s + 1);
     answer(q, ok);
   };
   const next = () => {
     if (index === pool.length - 1) {
+      finished.current = true;
       finishSession();
       onClose();
     } else {
@@ -37,17 +45,17 @@ export function Quiz({
   };
   if (!q)
     return (
-      <section className="screen active">
+      <section className="screen no-nav active">
         <div className="card empty show">No hay preguntas disponibles.</div>
-        <button className="white-btn full-action" onClick={onClose}>
+        <button className="white-btn full-action" onClick={close}>
           Volver
         </button>
       </section>
     );
   return (
-    <section className="screen active">
+    <section className="screen no-nav active">
       <div className="quiz-head">
-        <button className="icon-btn" onClick={onClose} aria-label="Cerrar">
+        <button className="icon-btn" onClick={close} aria-label="Cerrar">
           <Icon name="close" />
         </button>
         <div className="quiz-center">
@@ -136,6 +144,8 @@ export function createQuiz(
   let pool = questions.filter(
     (q) => q.difficulty === difficulty && (!topic || q.topic === topic),
   );
+  // El repaso incluye errores de cualquier dificultad: lo que importa es
+  // repasar lo fallado, no la dificultad activa en ese momento.
   if (reviewIds) pool = questions.filter((q) => reviewIds.includes(q.id));
   return shuffle(pool).slice(0, difficulty === "technical" ? 10 : 8);
 }
