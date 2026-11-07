@@ -1,12 +1,10 @@
 import { TOPICS, useRecall } from "../state";
 import { Icon } from "../components/Icon";
-import { topicMeta, type View } from "./shared";
+import { topicMeta } from "./shared";
 
 export function Home({
-  go,
   startQuiz,
 }: {
-  go: (view: View) => void;
   startQuiz: (topic?: string, review?: boolean) => void;
 }) {
   const { state, accuracy, streak } = useRecall();
@@ -91,7 +89,7 @@ export function Home({
         <span>Aciertos</span>
       </div>
       <div className="topic-progress-list">
-        {TOPICS.map((topic, i) => {
+        {TOPICS.map((topic) => {
           const item = state.topicStats[topic],
             pct = item.answered
               ? Math.round((item.correct / item.answered) * 100)

@@ -63,5 +63,4 @@ assets/css/styles.css  Estilos de la app
 - `npm run dev`: servidor de desarrollo.
 - `npm run build`: comprueba los tipos con `tsc` y construye para producción.
 - `npm run preview`: sirve el build local.
-
-No hay scripts de tests ni de lint: el repo no tiene framework de tests ni ESLint instalados. Los "tests" de la app son los tests que corren dentro de los retos de código, no tests del repositorio. Para añadirlos, en local: `npm install -D vitest` para tests de la lógica pura (`domain.ts`, integridad de `questions.ts`/`challenges.ts`) y, para lint de TypeScript, hace falta un `typescript-eslint` compatible con TypeScript 7, que a día de hoy no existe (las versiones 8.x piden TypeScript < 6.1). Mientras tanto, `npm run build` ya comprueba los tipos con `tsc` en modo estricto.
+- `npm test`: corre los tests de integridad de datos con Vitest.

@@ -74,7 +74,7 @@ export default function App() {
   };
   const screen =
     view === "home" ? (
-      <Home go={setView} startQuiz={startQuiz} />
+      <Home startQuiz={startQuiz} />
     ) : view === "learn" ? (
       <Learn />
     ) : view === "practice" ? (

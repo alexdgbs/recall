@@ -1,5 +1,5 @@
 import type { Challenge } from "../data";
-import { MAX_CODE_CHARS } from "../config";
+import { CODE_RUN_TIMEOUT_MS, MAX_CODE_CHARS } from "../config";
 export interface TestResult {
   pass: boolean;
   actual?: unknown;
@@ -86,7 +86,7 @@ self.onmessage = async (event) => {
           "La ejecución tardó demasiado. Revisa si hay un bucle infinito.",
         ),
       );
-    }, 1500);
+    }, CODE_RUN_TIMEOUT_MS);
     worker.onmessage = (event) => {
       clearTimeout(timer);
       done();

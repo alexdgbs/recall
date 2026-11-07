@@ -8,14 +8,12 @@ import {
 } from "react";
 import { challenges, questions, type Difficulty, type Question } from "./data";
 import {
-  TOPICS,
   freshState,
   isValidUsername,
   localDate,
   migrateState,
   normalizeUsername,
   type RecallState,
-  type Topic,
 } from "./domain";
 export { TOPICS, isValidUsername, normalizeUsername } from "./domain";
 
