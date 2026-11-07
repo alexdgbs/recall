@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import "../assets/css/styles.css";
 import { useRecall } from "./state";
 import {
@@ -21,30 +21,37 @@ export default function App() {
   const [quiz, setQuiz] = useState<{ pool: Question[]; title: string } | null>(
     null,
   );
+  // Escala del marco de teléfono en escritorio: se calcula con el tamaño de
+  // la ventana y se pasa como estilo de React, sin tocar el DOM a mano.
+  const [wide, setWide] = useState(
+    () =>
+      typeof matchMedia === "function" &&
+      matchMedia("(min-width: 901px)").matches,
+  );
+  const [scale, setScale] = useState(1);
   useEffect(() => {
     const fit = () => {
-      const frame = document.querySelector<HTMLElement>(".phone-frame");
-      if (!frame) return;
-      if (!matchMedia("(min-width: 901px)").matches) {
-        frame.style.removeProperty("--phone-scale");
-        frame.style.removeProperty("width");
-        frame.style.removeProperty("height");
-        return;
-      }
-      const scale = Math.min(1, (innerHeight - 32) / 844);
-      frame.style.setProperty("--phone-scale", String(scale));
-      frame.style.width = `${390 * scale}px`;
-      frame.style.height = `${844 * scale}px`;
+      setWide(matchMedia("(min-width: 901px)").matches);
+      setScale(Math.min(1, (innerHeight - 32) / 844));
     };
     fit();
     addEventListener("resize", fit, { passive: true });
     return () => removeEventListener("resize", fit);
   }, []);
+  const frameStyle = (
+    wide
+      ? {
+          "--phone-scale": String(scale),
+          width: `${390 * scale}px`,
+          height: `${844 * scale}px`,
+        }
+      : undefined
+  ) as CSSProperties | undefined;
   if (!state.onboarded)
     return (
       <div className="desktop-stage">
         <div />
-        <div className="phone-frame">
+        <div className="phone-frame" style={frameStyle}>
           <main className="phone">
             <Onboarding />
           </main>
@@ -95,7 +102,7 @@ export default function App() {
         </h2>
         <p>Una rutina breve para entender código y conservar lo aprendido.</p>
       </aside>
-      <div className="phone-frame">
+      <div className="phone-frame" style={frameStyle}>
         <main className="phone">
           {screen}
           {!storageAvailable && (

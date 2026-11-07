@@ -28,6 +28,33 @@ function NextButton({
     </button>
   );
 }
+// Envoltorio común de los pasos: antes cada paso repetía la misma sección y
+// el mismo div .onboard-wrap. Solo cambia la fila superior.
+function Shell({
+  top,
+  topClassName = "top-row",
+  children,
+}: {
+  top: ReactNode;
+  topClassName?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="screen onboarding active">
+      <div className="onboard-wrap">
+        <div className={topClassName}>{top}</div>
+        {children}
+      </div>
+    </section>
+  );
+}
+function BackButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button className="icon-btn" onClick={onClick} aria-label="Volver">
+      <Back />
+    </button>
+  );
+}
 export function Onboarding() {
   const { state, setUsername, finishOnboarding, restore } = useRecall();
   const [step, setStep] = useState(0);
@@ -53,160 +80,147 @@ export function Onboarding() {
     setBackupStatus(tryRestore(restore, backup));
   if (step === 0)
     return (
-      <section className="screen onboarding active">
-        <div className="onboard-wrap">
-          <div className="top-row">
+      <Shell
+        top={
+          <>
             <div className="mark" aria-label="Recall" />
             <Dots step={0} />
-          </div>
-          <div className="onboard-content">
-            <p className="eyebrow">RECALL</p>
-            <h1>Bienvenido.</h1>
-            <p>
-              Aprende JavaScript, practícalo y recuérdalo. Quiz por temas,
-              referencia rápida y retos de código con tests que corren en tu
-              navegador. Todo se guarda solo en este dispositivo: sin cuentas
-              ni servidores.
-            </p>
-            <p>12 áreas · 91 preguntas · 9 retos de código</p>
-          </div>
-          <div className="onboard-actions split">
-            <button className="text-action" onClick={() => setStep(5)}>
-              Ya tengo un código
-            </button>
-            <NextButton onClick={() => setStep(1)}>Continuar</NextButton>
-          </div>
+          </>
+        }
+      >
+        <div className="onboard-content">
+          <p className="eyebrow">RECALL</p>
+          <h1>Bienvenido.</h1>
+          <p>
+            Aprende JavaScript, practícalo y recuérdalo. Quiz por temas,
+            referencia rápida y retos de código con tests que corren en tu
+            navegador. Todo se guarda solo en este dispositivo: sin cuentas
+            ni servidores.
+          </p>
+          <p>12 áreas · 91 preguntas · 9 retos de código</p>
         </div>
-      </section>
+        <div className="onboard-actions split">
+          <button className="text-action" onClick={() => setStep(5)}>
+            Ya tengo un código
+          </button>
+          <NextButton onClick={() => setStep(1)}>Continuar</NextButton>
+        </div>
+      </Shell>
     );
   if (step === 5)
     return (
-      <section className="screen onboarding active">
-        <div className="onboard-wrap">
-          <div className="top-row logo-only">
-            <button
-              className="icon-btn"
-              onClick={() => setStep(0)}
-              aria-label="Volver"
-            >
-              <Back />
-            </button>
+      <Shell
+        topClassName="top-row logo-only"
+        top={
+          <>
+            <BackButton onClick={() => setStep(0)} />
             <div className="word-logo">Recall</div>
-          </div>
-          <div className="onboard-content">
-            <p className="eyebrow">RESTAURAR</p>
-            <h2>
-              ¿Vienes de
-              <br />
-              otro dispositivo?
-            </h2>
-            <p>
-              Pega tu código de respaldo. Si es válido, recuperaremos tu usuario
-              y progreso.
-            </p>
-            <div className="card restore-panel">
-              <textarea
-                maxLength={120000}
-                value={backup}
-                onChange={(e) => setBackup(e.target.value)}
-                placeholder="Pega aquí tu código de respaldo..."
-              />
-              <div
-                className={`status ${backupStatus.startsWith("Datos") ? "ok" : ""}`}
-              >
-                {backupStatus}
-              </div>
+          </>
+        }
+      >
+        <div className="onboard-content">
+          <p className="eyebrow">RESTAURAR</p>
+          <h2>
+            ¿Vienes de
+            <br />
+            otro dispositivo?
+          </h2>
+          <p>
+            Pega tu código de respaldo. Si es válido, recuperaremos tu usuario
+            y progreso.
+          </p>
+          <div className="card restore-panel">
+            <textarea
+              maxLength={120000}
+              value={backup}
+              onChange={(e) => setBackup(e.target.value)}
+              placeholder="Pega aquí tu código de respaldo..."
+            />
+            <div
+              className={`status ${backupStatus.startsWith("Datos") ? "ok" : ""}`}
+            >
+              {backupStatus}
             </div>
           </div>
-          <div className="onboard-actions split">
-            <button className="text-action" onClick={() => setStep(0)}>
-              Cancelar
-            </button>
-            <NextButton onClick={restoreData}>Restaurar</NextButton>
-          </div>
         </div>
-      </section>
+        <div className="onboard-actions split">
+          <button className="text-action" onClick={() => setStep(0)}>
+            Cancelar
+          </button>
+          <NextButton onClick={restoreData}>Restaurar</NextButton>
+        </div>
+      </Shell>
     );
   if (step === 1)
     return (
-      <section className="screen onboarding active">
-        <div className="onboard-wrap">
-          <div className="top-row">
-            <button
-              className="icon-btn"
-              onClick={() => setStep(0)}
-              aria-label="Volver"
-            >
-              <Back />
-            </button>
+      <Shell
+        top={
+          <>
+            <BackButton onClick={() => setStep(0)} />
             <Dots step={1} />
-          </div>
-          <div className="onboard-content">
-            <p className="eyebrow">TU PERFIL</p>
-            <h2>Elige un usuario</h2>
-            <p>
-              Se guarda únicamente en este navegador. No se envía a ningún
-              servidor.
-            </p>
-            <div className="field">
-              <label htmlFor="nameInput">USUARIO</label>
-              <input
-                id="nameInput"
-                minLength={3}
-                maxLength={12}
-                autoComplete="username"
-                autoCapitalize="none"
-                spellCheck={false}
-                value={name}
-                onChange={(e) => setName(e.target.value.toLowerCase())}
-                placeholder="not_recall"
-              />
-              <div className="field-foot">
-                <div className="field-error">{error}</div>
-                <span>{name.length}/12</span>
-              </div>
-            </div>
-            <div className="privacy-note">
-              No usamos tu IP como identificador.
-              <br />
-              Tus datos permanecen en este dispositivo.
+          </>
+        }
+      >
+        <div className="onboard-content">
+          <p className="eyebrow">TU PERFIL</p>
+          <h2>Elige un usuario</h2>
+          <p>
+            Se guarda únicamente en este navegador. No se envía a ningún
+            servidor.
+          </p>
+          <div className="field">
+            <label htmlFor="nameInput">USUARIO</label>
+            <input
+              id="nameInput"
+              minLength={3}
+              maxLength={12}
+              autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
+              value={name}
+              onChange={(e) => setName(e.target.value.toLowerCase())}
+              placeholder="not_recall"
+            />
+            <div className="field-foot">
+              <div className="field-error">{error}</div>
+              <span>{name.length}/12</span>
             </div>
           </div>
-          <div className="onboard-actions">
-            <NextButton onClick={submitName}>Continuar</NextButton>
+          <div className="privacy-note">
+            No usamos tu IP como identificador.
+            <br />
+            Tus datos permanecen en este dispositivo.
           </div>
         </div>
-      </section>
+        <div className="onboard-actions">
+          <NextButton onClick={submitName}>Continuar</NextButton>
+        </div>
+      </Shell>
     );
   if (step === 2)
     return (
-      <section className="screen onboarding active">
-        <div className="onboard-wrap">
-          <div className="top-row">
-            <button
-              className="icon-btn"
-              onClick={() => setStep(1)}
-              aria-label="Volver"
-            >
-              <Back />
-            </button>
+      <Shell
+        top={
+          <>
+            <BackButton onClick={() => setStep(1)} />
             <Dots step={2} />
-          </div>
-          <div className="personal-welcome">
-            <p className="eyebrow">LISTO</p>
-            <h1>
-              Hola,<span>{state.profile.name}</span>
-            </h1>
-            <p className="personal-welcome-copy">
-              <span>Aprende hoy.</span>
-              <span>Recuérdalo mañana.</span>
-            </p>
-          </div>
-          <div className="onboard-actions">
-            <NextButton onClick={() => setStep(3)}>Continuar</NextButton>
-          </div>
+          </>
+        }
+      >
+        <div className="personal-welcome">
+          <p className="eyebrow">LISTO</p>
+          <h1>
+            Hola,<span>{state.profile.name}</span>
+          </h1>
+          <p className="personal-welcome-copy">
+            <span>Aprende hoy.</span>
+            <span>Recuérdalo mañana.</span>
+          </p>
         </div>
-      </section>
+        <div className="onboard-actions">
+          <NextButton onClick={() => setStep(3)}>Continuar</NextButton>
+        </div>
+      </Shell>
     );
   if (step === 3)
     return (
@@ -259,53 +273,52 @@ function Intro({
 }) {
   const learn = step === 3;
   return (
-    <section className="screen onboarding active">
-      <div className="onboard-wrap">
-        <div className="top-row">
-          <button className="icon-btn" onClick={back} aria-label="Volver">
-            <Back />
-          </button>
+    <Shell
+      top={
+        <>
+          <BackButton onClick={back} />
           <Dots step={step} />
-        </div>
-        <div className="onboard-content">
-          <p className="eyebrow">{learn ? "APRENDE" : "PRACTICA"}</p>
-          <h2>{title}</h2>
-          <p>{copy}</p>
-          <div className="card hero-panel">
-            <div className="row">
-              <div className="hero-icon">
-                <Icon name={learn ? "book" : "code"} />
-              </div>
-              <div>
-                <strong>
-                  {learn ? "Referencia rápida" : "Preguntas de código"}
-                </strong>
-                <small>
-                  {learn
-                    ? "slice, splice, map, filter, reduce, Set, Map, async/await y más."
-                    : "if/else, for, while, arrays, funciones, objetos, métodos y algoritmos."}
-                </small>
-              </div>
+        </>
+      }
+    >
+      <div className="onboard-content">
+        <p className="eyebrow">{learn ? "APRENDE" : "PRACTICA"}</p>
+        <h2>{title}</h2>
+        <p>{copy}</p>
+        <div className="card hero-panel">
+          <div className="row">
+            <div className="hero-icon">
+              <Icon name={learn ? "book" : "code"} />
             </div>
-            <div className="row">
-              <div className="hero-icon">
-                <Icon name={learn ? "fundamentals" : "chart"} />
-              </div>
-              <div>
-                <strong>{learn ? "Ejemplos claros" : "Progreso local"}</strong>
-                <small>
-                  {learn
-                    ? "Cada concepto incluye una explicación corta y código de ejemplo."
-                    : "Se guardan sesiones, respuestas correctas y porcentaje de acierto."}
-                </small>
-              </div>
+            <div>
+              <strong>
+                {learn ? "Referencia rápida" : "Preguntas de código"}
+              </strong>
+              <small>
+                {learn
+                  ? "slice, splice, map, filter, reduce, Set, Map, async/await y más."
+                  : "if/else, for, while, arrays, funciones, objetos, métodos y algoritmos."}
+              </small>
+            </div>
+          </div>
+          <div className="row">
+            <div className="hero-icon">
+              <Icon name={learn ? "fundamentals" : "chart"} />
+            </div>
+            <div>
+              <strong>{learn ? "Ejemplos claros" : "Progreso local"}</strong>
+              <small>
+                {learn
+                  ? "Cada concepto incluye una explicación corta y código de ejemplo."
+                  : "Se guardan sesiones, respuestas correctas y porcentaje de acierto."}
+              </small>
             </div>
           </div>
         </div>
-        <div className="onboard-actions">
-          <NextButton onClick={next}>{action}</NextButton>
-        </div>
       </div>
-    </section>
+      <div className="onboard-actions">
+        <NextButton onClick={next}>{action}</NextButton>
+      </div>
+    </Shell>
   );
 }

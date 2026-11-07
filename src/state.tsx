@@ -38,6 +38,11 @@ const load = () => {
     const raw = localStorage.getItem(STORAGE_KEY);
     return raw ? cleanReferences(migrateState(JSON.parse(raw))) : freshState();
   } catch {
+    // El valor guardado está corrupto: se borra para no dejarlo ahí hasta
+    // el siguiente cambio de estado.
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {}
     return freshState();
   }
 };

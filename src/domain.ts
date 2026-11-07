@@ -74,11 +74,34 @@ export const normalizeUsername = (value: string) =>
     .replace(/[._]+$/g, "");
 export const isValidUsername = (value: string) =>
   /^[a-z0-9](?:[a-z0-9._]{1,10}[a-z0-9])$/.test(value) && !value.includes("..");
+// Lo que puede venir guardado en localStorage o en un código de respaldo:
+// la misma forma que RecallState, pero todo opcional y sin tipos afirmados.
+interface StoredState {
+  onboarded?: unknown;
+  profile?: { name?: unknown };
+  stats?: {
+    sessions?: unknown;
+    totalAnswers?: unknown;
+    correctAnswers?: unknown;
+  };
+  settings?: { difficulty?: unknown; dailyGoal?: unknown };
+  activity?: {
+    streak?: unknown;
+    lastActiveDate?: unknown;
+    daily?: { date?: unknown; answers?: unknown };
+  };
+  errors?: unknown;
+  topicStats?: Record<string, { answered?: unknown; correct?: unknown }>;
+  codeStats?: { attempts?: unknown; passed?: unknown; completed?: unknown };
+}
 export function migrateState(input: unknown): RecallState {
   const base = freshState();
   if (!input || typeof input !== "object") return base;
-  const p = input as Partial<RecallState>;
-  const name = normalizeUsername(p.profile?.name ?? "");
+  // Forma guardada: se lee campo por campo con comprobaciones, sin afirmar
+  // que el objeto desconocido ya es un RecallState completo.
+  const p = input as StoredState;
+  const name =
+    typeof p.profile?.name === "string" ? normalizeUsername(p.profile.name) : "";
   const total = safe(p.stats?.totalAnswers);
   base.onboarded = Boolean(p.onboarded) && isValidUsername(name);
   base.profile = { name };
@@ -87,14 +110,16 @@ export function migrateState(input: unknown): RecallState {
     totalAnswers: total,
     correctAnswers: Math.min(safe(p.stats?.correctAnswers), total),
   };
+  const difficulty = p.settings?.difficulty;
   if (
-    ["basic", "intermediate", "technical"].includes(
-      p.settings?.difficulty ?? "",
-    )
+    difficulty === "basic" ||
+    difficulty === "intermediate" ||
+    difficulty === "technical"
   )
-    base.settings.difficulty = p.settings!.difficulty!;
-  if ([5, 10, 20].includes(Number(p.settings?.dailyGoal)))
-    base.settings.dailyGoal = Number(p.settings!.dailyGoal) as 5 | 10 | 20;
+    base.settings.difficulty = difficulty;
+  const dailyGoal = Number(p.settings?.dailyGoal);
+  if (dailyGoal === 5 || dailyGoal === 10 || dailyGoal === 20)
+    base.settings.dailyGoal = dailyGoal;
   base.activity = {
     streak: safe(p.activity?.streak),
     lastActiveDate:

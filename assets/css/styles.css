@@ -552,6 +552,12 @@ svg {
   margin-top: 3px;
   font-size: 28px;
 }
+.greeting-sub {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+}
 .session {
   margin-top: 24px;
   padding: 20px;

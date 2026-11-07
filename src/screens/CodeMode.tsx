@@ -10,12 +10,21 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
     (c) => c.difficulty === state.settings.difficulty,
   );
   const [index, setIndex] = useState(0);
-  const challenge = list[index] ?? challenges[0];
-  const [code, setCode] = useState(challenge.template);
+  const challenge = list[index];
+  const [code, setCode] = useState(challenge?.template ?? "");
   const [results, setResults] = useState<TestResult[]>([]);
   const [status, setStatus] = useState(
     "Escribe tu solución y ejecuta los tests.",
   );
+  if (!challenge)
+    return (
+      <section className="screen no-nav active">
+        <div className="card empty show">No hay retos disponibles.</div>
+        <button className="white-btn full-action" onClick={onClose}>
+          Volver
+        </button>
+      </section>
+    );
   const change = (next: number) => {
     const i = (next + list.length) % list.length;
     setIndex(i);

@@ -78,9 +78,7 @@ export function Quiz({
             : q.hint}
         </p>
       </div>
-      <pre className="code code-box">
-        {q.code || "Selecciona la respuesta."}
-      </pre>
+      <pre className="code code-box">{q.code}</pre>
       <div className="answers">
         {q.options.map((option, i) => (
           <button

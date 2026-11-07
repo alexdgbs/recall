@@ -20,6 +20,9 @@ export function Home({
         <div className="greeting">
           <p>Bienvenido</p>
           <h2>{state.profile.name}</h2>
+          <p className="greeting-sub">
+            Quiz, referencia y retos de JavaScript, todo en este dispositivo.
+          </p>
         </div>
         <div className="avatar">{initials}</div>
       </div>
@@ -88,7 +91,7 @@ export function Home({
         <span>Aciertos</span>
       </div>
       <div className="topic-progress-list">
-        {TOPICS.map((topic) => {
+        {TOPICS.map((topic, i) => {
           const item = state.topicStats[topic],
             pct = item.answered
               ? Math.round((item.correct / item.answered) * 100)
@@ -96,7 +99,7 @@ export function Home({
           return (
             <div className="topic-progress-item" key={topic}>
               <div className="topic-progress-head">
-                <strong>{topic === "Metodos" ? "Métodos" : topic}</strong>
+                <strong>{topicMeta[i][0]}</strong>
                 <span>
                   {item.answered
                     ? `${item.correct} de ${item.answered} correctas`
