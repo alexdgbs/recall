@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 import { challenges } from "../data";
 import { MAX_CODE_CHARS } from "../config";
 import { useRecall } from "../state";
@@ -13,6 +13,9 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
   const [index, setIndex] = useState(0);
   const challenge = list[index];
   const [code, setCode] = useState(challenge?.template ?? "");
+  // Borradores por reto: cambiar de reto no tira lo escrito; al volver,
+  // cada reto muestra su último código, no el template.
+  const drafts = useRef<Record<string, string>>({});
   const [results, setResults] = useState<TestResult[]>([]);
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState(
@@ -28,9 +31,10 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
       </section>
     );
   const change = (next: number) => {
+    drafts.current[challenge.id] = code;
     const i = (next + list.length) % list.length;
     setIndex(i);
-    setCode(list[i].template);
+    setCode(drafts.current[list[i].id] ?? list[i].template);
     setResults([]);
     setStatus("Escribe tu solución y ejecuta los tests.");
   };
@@ -111,7 +115,11 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
       <div className="code-actions">
         <button
           className="outline-btn"
-          onClick={() => setCode(challenge.template)}
+          onClick={() => {
+            // Reiniciar borra también el borrador guardado de este reto.
+            delete drafts.current[challenge.id];
+            setCode(challenge.template);
+          }}
         >
           Reiniciar
         </button>

@@ -63,4 +63,5 @@ assets/css/styles.css  Estilos de la app
 - `npm run dev`: servidor de desarrollo.
 - `npm run build`: comprueba los tipos con `tsc` y construye para producción.
 - `npm run preview`: sirve el build local.
+- `npm run lint`: revisa el código con oxlint (ESLint no corre con TypeScript 7.0: typescript-eslint lo rechaza hasta que soporte TS 7.1).
 - `npm test`: corre los tests de integridad de datos con Vitest.

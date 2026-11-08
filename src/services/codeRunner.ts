@@ -90,9 +90,8 @@ self.onmessage = async (event) => {
     worker.onmessage = (event) => {
       clearTimeout(timer);
       done();
-      event.data.error
-        ? reject(new Error(event.data.error))
-        : resolve(event.data.results);
+      if (event.data.error) reject(new Error(event.data.error));
+      else resolve(event.data.results);
     };
     worker.onerror = () => {
       clearTimeout(timer);
