@@ -1,4 +1,4 @@
-import type { Difficulty } from "./data";
+import { challenges, type Difficulty } from "./data";
 export const TOPICS = [
   "Fundamentos",
   "Control",
@@ -47,6 +47,9 @@ export interface RecallState {
   errors: string[];
   topicStats: Record<Topic, Count>;
   codeStats: { attempts: number; passed: number; completed: string[] };
+  // Último código escrito en cada reto: se guarda en localStorage, así
+  // al salir y volver el editor muestra lo escrito, no la plantilla.
+  codeDrafts: Record<string, string>;
   updatedAt: number;
 }
 export const topicLabel = (group: string) =>
@@ -80,6 +83,7 @@ export const freshState = (): RecallState => ({
   errors: [],
   topicStats: blankTopics(),
   codeStats: { attempts: 0, passed: 0, completed: [] },
+  codeDrafts: {},
   updatedAt: Date.now(),
 });
 const safe = (value: unknown) =>
@@ -119,6 +123,7 @@ interface StoredState {
   errors?: unknown;
   topicStats?: Record<string, { answered?: unknown; correct?: unknown }>;
   codeStats?: { attempts?: unknown; passed?: unknown; completed?: unknown };
+  codeDrafts?: unknown;
 }
 export function migrateState(input: unknown): RecallState {
   const base = freshState();
@@ -160,6 +165,10 @@ export function migrateState(input: unknown): RecallState {
       answers: safe(p.activity?.daily?.answers),
     },
   };
+  // La meta es de hoy: si lo guardado es de otro día, el contador de hoy
+  // empieza en cero, no con las respuestas de ayer.
+  if (base.activity.daily.date !== localDate())
+    base.activity.daily = { date: localDate(), answers: 0 };
   base.errors = Array.isArray(p.errors)
     ? [
         ...new Set(
@@ -188,5 +197,19 @@ export function migrateState(input: unknown): RecallState {
     passed: Math.max(completed.length, safe(p.codeStats?.passed)),
     completed,
   };
+  // Borradores guardados: solo texto corto de retos que existen.
+  const challengeIds = new Set(challenges.map((c) => c.id));
+  const drafts =
+    p.codeDrafts && typeof p.codeDrafts === "object"
+      ? Object.fromEntries(
+          Object.entries(p.codeDrafts as Record<string, unknown>).filter(
+            ([id, v]) =>
+              challengeIds.has(id) &&
+              typeof v === "string" &&
+              v.length <= 10000,
+          ),
+        )
+      : {};
+  base.codeDrafts = drafts as Record<string, string>;
   return base;
 }

@@ -29,6 +29,9 @@ const cleanReferences = (value: RecallState) => {
     value.codeStats.passed,
     value.codeStats.completed.length,
   );
+  // Borradores solo de retos que existen.
+  for (const id of Object.keys(value.codeDrafts ?? {}))
+    if (!challengeIds.has(id)) delete value.codeDrafts[id];
   return value;
 };
 const load = () => {
@@ -57,6 +60,8 @@ interface RecallContextValue {
   answer: (question: Question, correct: boolean) => void;
   finishSession: () => void;
   registerCodeAttempt: (challengeId: string, passed: boolean) => boolean;
+  saveCodeDraft: (challengeId: string, code: string) => void;
+  clearCodeDraft: (challengeId: string) => void;
   restore: (input: unknown) => void;
   reset: () => void;
 }
@@ -152,6 +157,19 @@ export function RecallProvider({ children }: { children: ReactNode }) {
         });
         return first;
       },
+      // El borrador se guarda en el estado, así sobrevive a salir y volver.
+      saveCodeDraft: (id, code) =>
+        commit((s) => {
+          const n = structuredClone(s);
+          n.codeDrafts[id] = code;
+          return n;
+        }),
+      clearCodeDraft: (id) =>
+        commit((s) => {
+          const n = structuredClone(s);
+          delete n.codeDrafts[id];
+          return n;
+        }),
       restore: (input) => {
         const restored = cleanReferences(migrateState(input));
         if (!isValidUsername(restored.profile.name))

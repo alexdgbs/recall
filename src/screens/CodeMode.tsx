@@ -6,16 +6,24 @@ import { runCode, type TestResult } from "../services/codeRunner";
 import { Back, formatValue, label } from "./shared";
 
 export function CodeMode({ onClose }: { onClose: () => void }) {
-  const { state, registerCodeAttempt } = useRecall();
+  const { state, registerCodeAttempt, saveCodeDraft, clearCodeDraft } =
+    useRecall();
   const list = challenges.filter(
     (c) => c.difficulty === state.settings.difficulty,
   );
   const [index, setIndex] = useState(0);
   const challenge = list[index];
-  const [code, setCode] = useState(challenge?.template ?? "");
   // Borradores por reto: cambiar de reto no tira lo escrito; al volver,
-  // cada reto muestra su último código, no el template.
-  const drafts = useRef<Record<string, string>>({});
+  // cada reto muestra su último código, no el template. El ref es la
+  // copia rápida en sesión; lo guardado vive en el estado y sobrevive
+  // a salir de la pantalla y a recargar.
+  const drafts = useRef<Record<string, string>>({ ...state.codeDrafts });
+  const [code, setCode] = useState(
+    () =>
+      (challenge ? drafts.current[challenge.id] : undefined) ??
+      challenge?.template ??
+      "",
+  );
   const [results, setResults] = useState<TestResult[]>([]);
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState(
@@ -32,11 +40,22 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
     );
   const change = (next: number) => {
     drafts.current[challenge.id] = code;
+    saveCodeDraft(challenge.id, code);
     const i = (next + list.length) % list.length;
+    const nextCode =
+      drafts.current[list[i].id] ??
+      state.codeDrafts[list[i].id] ??
+      list[i].template;
+    drafts.current[list[i].id] = nextCode;
     setIndex(i);
-    setCode(drafts.current[list[i].id] ?? list[i].template);
+    setCode(nextCode);
     setResults([]);
     setStatus("Escribe tu solución y ejecuta los tests.");
+  };
+  // Salir guarda lo escrito, para que siga ahí al volver.
+  const exit = () => {
+    saveCodeDraft(challenge.id, code);
+    onClose();
   };
   const handleTab = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key !== "Tab") return;
@@ -56,6 +75,8 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
     if (running) return;
     setRunning(true);
     setStatus("Ejecutando…");
+    // Lo escrito queda guardado aunque se salga sin volver a tocar nada.
+    saveCodeDraft(challenge.id, code);
     try {
       const output = await runCode(code, challenge);
       setResults(output);
@@ -80,7 +101,7 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
   return (
     <section className="screen no-nav active">
       <div className="quiz-head">
-        <button className="icon-btn" onClick={onClose} aria-label="Volver">
+        <button className="icon-btn" onClick={exit} aria-label="Volver">
           <Back />
         </button>
         <div className="quiz-center">
@@ -118,6 +139,7 @@ export function CodeMode({ onClose }: { onClose: () => void }) {
           onClick={() => {
             // Reiniciar borra también el borrador guardado de este reto.
             delete drafts.current[challenge.id];
+            clearCodeDraft(challenge.id);
             setCode(challenge.template);
           }}
         >

@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { challenges, concepts, questions, type Difficulty } from "../src/data";
-import { TOPICS, TOPIC_LABELS, normalizeSearch } from "../src/domain";
+import {
+  TOPICS,
+  TOPIC_LABELS,
+  localDate,
+  migrateState,
+  normalizeSearch,
+} from "../src/domain";
 import { createQuiz } from "../src/screens/Quiz";
 import { topicMeta } from "../src/screens/shared";
 
@@ -196,5 +202,41 @@ describe("repaso sin errores", () => {
     // Con 0 errores los botones no navegan (y App lo bloquea): el quiz
     // vacío no se abre.
     expect(createQuiz("basic", undefined, [])).toEqual([]);
+  });
+});
+
+describe("borradores y meta del día", () => {
+  it("migrateState guarda los borradores válidos y tira el resto", () => {
+    const out = migrateState({
+      codeDrafts: {
+        "flatten-one": "function flattenOne(arr) {\n  return arr.flat(1);\n}",
+        "no-existe": "x",
+        roto: 42,
+      },
+    });
+    expect(out.codeDrafts["flatten-one"]).toContain("arr.flat(1)");
+    expect(out.codeDrafts["no-existe"]).toBeUndefined();
+    expect(out.codeDrafts.roto).toBeUndefined();
+  });
+
+  it("migrateState deja la meta de hoy en cero si lo guardado es de ayer", () => {
+    const yesterday = localDate(-1);
+    const out = migrateState({
+      activity: {
+        daily: { date: yesterday, answers: 2 },
+      },
+    });
+    expect(out.activity.daily.date).toBe(localDate());
+    expect(out.activity.daily.answers).toBe(0);
+  });
+
+  it("migrateState conserva las respuestas de hoy", () => {
+    const out = migrateState({
+      activity: {
+        daily: { date: localDate(), answers: 2 },
+      },
+    });
+    expect(out.activity.daily.date).toBe(localDate());
+    expect(out.activity.daily.answers).toBe(2);
   });
 });
