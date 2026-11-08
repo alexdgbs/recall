@@ -16,17 +16,19 @@ export const TOPICS = [
 export type Topic = (typeof TOPICS)[number];
 // Etiqueta visible por tema: la clave interna sigue sin acento ("Metodos")
 // para no romper los datos guardados; lo que se muestra lleva acento.
+// Es el único sitio con los nombres visibles: topicMeta (Home) los toma
+// de aquí, y Aprender usa topicLabel, así no hay dos versiones.
 export const TOPIC_LABELS: Record<Topic, string> = {
   Fundamentos: "Fundamentos",
-  Control: "Control",
+  Control: "Condicionales",
   Bucles: "Bucles",
   Arrays: "Arrays",
   Metodos: "Métodos",
   Funciones: "Funciones",
   Objetos: "Objetos",
-  Colecciones: "Colecciones",
-  Async: "Async",
-  DOM: "DOM",
+  Colecciones: "Set y Map",
+  Async: "Asincronía",
+  DOM: "DOM y eventos",
   Errores: "Errores",
   Algoritmos: "Algoritmos",
 };
@@ -49,6 +51,12 @@ export interface RecallState {
 }
 export const topicLabel = (group: string) =>
   (TOPIC_LABELS as Record<string, string>)[group] ?? group;
+// Búsqueda sin acentos: "metodos" encuentra "Métodos de string".
+export const normalizeSearch = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
 export const localDate = (offset = 0) => {
   const d = new Date();
   d.setDate(d.getDate() + offset);

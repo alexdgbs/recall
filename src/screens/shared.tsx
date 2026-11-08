@@ -1,5 +1,6 @@
 import type { Difficulty } from "../data";
 import type { Topic } from "../domain";
+import { topicLabel } from "../domain";
 import { readBackup } from "../services/backup";
 import { Icon, type IconName } from "../components/Icon";
 
@@ -25,67 +26,69 @@ export const Arrow = () => <Icon name="arrow" />;
 export const Back = () => <Icon name="back" />;
 // Metadatos por tema, por clave y no por índice: si se reordena TOPICS,
 // cada tema sigue con su título, su descripción y su icono.
+// El título visible sale de TOPIC_LABELS (domain.ts), el único sitio con
+// los nombres: antes Home decía "Condicionales" y Aprender "Control".
 export const topicMeta: Record<
   Topic,
   { title: string; desc: string; icon: IconName }
 > = {
   Fundamentos: {
-    title: "Fundamentos",
+    title: topicLabel("Fundamentos"),
     desc: "let · const · tipos · ===",
     icon: "fundamentals",
   },
   Control: {
-    title: "Condicionales",
+    title: topicLabel("Control"),
     desc: "if · else · switch · ternario",
     icon: "control",
   },
   Bucles: {
-    title: "Bucles",
+    title: topicLabel("Bucles"),
     desc: "for · while · for...of · for...in",
     icon: "loops",
   },
   Arrays: {
-    title: "Arrays",
+    title: topicLabel("Arrays"),
     desc: "slice · splice · push · pop",
     icon: "arrays",
   },
   Metodos: {
-    title: "Métodos",
+    title: topicLabel("Metodos"),
     desc: "map · filter · find · reduce",
     icon: "methods",
   },
   Funciones: {
-    title: "Funciones",
+    title: topicLabel("Funciones"),
     desc: "function · arrow · callback",
     icon: "functions",
   },
   Objetos: {
-    title: "Objetos",
+    title: topicLabel("Objetos"),
     desc: "keys · values · destructuring",
     icon: "objects",
   },
   Colecciones: {
-    title: "Set y Map",
+    title: topicLabel("Colecciones"),
     desc: "unique · add · get · set",
     icon: "collections",
   },
   Async: {
-    title: "Asincronía",
+    title: topicLabel("Async"),
     desc: "Promise · async · await",
     icon: "async",
   },
   DOM: {
-    title: "DOM y eventos",
+    title: topicLabel("DOM"),
     desc: "selector · click · textContent",
     icon: "dom",
   },
   Errores: {
-    title: "Errores",
+    title: topicLabel("Errores"),
     desc: "try · catch · throw",
     icon: "errors",
   },
   Algoritmos: {
-    title: "Algoritmos",
+    title: topicLabel("Algoritmos"),
     desc: "buscar · contar · duplicados · Big O",
     icon: "algorithms",
   },

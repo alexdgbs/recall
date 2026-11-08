@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { concepts } from "../data";
-import { topicLabel } from "../domain";
+import { normalizeSearch, topicLabel } from "../domain";
 
 export function Learn() {
   const [term, setTerm] = useState("");
+  const needle = normalizeSearch(term);
   const visible = concepts.filter((c) =>
-    (c.name + c.group + c.summary).toLowerCase().includes(term.toLowerCase()),
+    normalizeSearch(c.name + c.group + c.summary).includes(needle),
   );
   return (
     <section className="screen active">

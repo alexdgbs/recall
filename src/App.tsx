@@ -61,6 +61,8 @@ export default function App() {
       </div>
     );
   const startQuiz = (topic?: string, review = false) => {
+    // Sin errores no hay repaso: no abrir un quiz vacío.
+    if (review && state.errors.length === 0) return;
     const pool = createQuiz(
       state.settings.difficulty,
       topic,
@@ -119,11 +121,7 @@ export default function App() {
       <aside className="showcase-editorial showcase-detail" aria-hidden="true">
         <div className="showcase-code-block">
           <span>práctica de hoy</span>
-          <code>
-            nums.filter(n =&gt;
-            <br />
-            &nbsp;&nbsp;n % 2 === 0<br />)
-          </code>
+          <code>nums.filter(n =&gt; n % 2 === 0)</code>
         </div>
         <div className="showcase-facts">
           <div>

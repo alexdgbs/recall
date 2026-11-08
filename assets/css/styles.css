@@ -143,6 +143,9 @@ button {
   font-size: 16px;
   line-height: 1.75;
   color: #e2e4e8;
+  /* Una sola línea: antes se partía en tres ("nums.filter(n =>" /
+  "n % 2 === 0" / ")"). */
+  white-space: nowrap;
 }
 .showcase-facts {
   display: grid;
@@ -324,6 +327,12 @@ svg {
   flex-direction: column;
   justify-content: center;
   padding: 68px 0 28px;
+}
+/* Paso 0: el contenido centrado dejaba un hueco grande entre los puntos
+   y "Bienvenido."; aquí empieza arriba, con aire. Solo este paso. */
+.onboard-content--top {
+  justify-content: flex-start;
+  padding-top: 40px;
 }
 .onboard-content p {
   color: var(--muted);
@@ -1288,6 +1297,16 @@ pre {
 }
 .mode-card:hover {
   border-color: var(--line2);
+}
+/* Deshabilitado (Repasar pendientes sin errores): se ve apagado y no
+   reacciona al hover, para que no parezca que abre algo. */
+.mode-card:disabled,
+.review-card:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.mode-card:disabled:hover {
+  background: var(--panel);
 }
 .mode-card .mode-copy strong {
   display: block;

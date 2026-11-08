@@ -52,6 +52,8 @@ export function Practice({
               ? `${state.errors.length} preguntas por dominar.`
               : "No tienes errores pendientes."
           }
+          // Sin errores el quiz saldría vacío: el botón no navega.
+          disabled={state.errors.length === 0}
           onClick={() => startQuiz(undefined, true)}
         />
         <Mode
@@ -72,15 +74,17 @@ function Mode({
   eyebrow,
   title,
   copy,
+  disabled = false,
   onClick,
 }: {
   eyebrow: string;
   title: string;
   copy: string;
+  disabled?: boolean;
   onClick: () => void;
 }) {
   return (
-    <button className="mode-card" onClick={onClick}>
+    <button className="mode-card" onClick={onClick} disabled={disabled}>
       <div className="mode-copy">
         <p className="eyebrow">{eyebrow}</p>
         <strong>{title}</strong>

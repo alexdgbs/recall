@@ -1,6 +1,24 @@
 import { TOPICS, useRecall } from "../state";
 import { Icon } from "../components/Icon";
 import { topicMeta } from "./shared";
+import type { Difficulty } from "../data";
+
+// La sesión recomendada es el quiz mixto con la dificultad activa: el
+// título dice la dificultad real, no "técnico" cuando es básico.
+const sessionCopy: Record<Difficulty, { title: string; copy: string }> = {
+  basic: {
+    title: "Repaso básico",
+    copy: "Preguntas cortas de sintaxis, arrays y funciones.",
+  },
+  intermediate: {
+    title: "Repaso intermedio",
+    copy: "Una mezcla de sintaxis, arrays, funciones y lógica.",
+  },
+  technical: {
+    title: "Prueba técnica",
+    copy: "Preguntas de prueba técnica, sin pistas.",
+  },
+};
 
 export function Home({
   startQuiz,
@@ -12,6 +30,7 @@ export function Home({
     goal = state.settings.dailyGoal,
     pct = Math.min(100, Math.round((done / goal) * 100));
   const initials = (state.profile.name[0] || "R").toUpperCase();
+  const session = sessionCopy[state.settings.difficulty];
   return (
     <section className="screen active">
       <div className="app-header">
@@ -26,11 +45,8 @@ export function Home({
       </div>
       <div className="card session">
         <p className="eyebrow">SESIÓN RECOMENDADA</p>
-        <h3>Repaso técnico mixto</h3>
-        <p>
-          Una mezcla breve de sintaxis, arrays, funciones y lógica de
-          entrevistas.
-        </p>
+        <h3>{session.title}</h3>
+        <p>{session.copy}</p>
         <button className="white-btn" onClick={() => startQuiz()}>
           Empezar práctica
         </button>
@@ -74,6 +90,7 @@ export function Home({
       <button
         className="card review-card review-button"
         onClick={() => startQuiz(undefined, true)}
+        disabled={state.errors.length === 0}
       >
         <div>
           <p className="eyebrow">REPASAR ERRORES</p>

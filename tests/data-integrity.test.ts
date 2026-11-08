@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { challenges, concepts, questions, type Difficulty } from "../src/data";
-import { TOPICS, TOPIC_LABELS } from "../src/domain";
+import { TOPICS, TOPIC_LABELS, normalizeSearch } from "../src/domain";
+import { createQuiz } from "../src/screens/Quiz";
 import { topicMeta } from "../src/screens/shared";
 
 const DIFFICULTIES: Difficulty[] = ["basic", "intermediate", "technical"];
@@ -158,5 +159,42 @@ describe("temas", () => {
   it("la etiqueta visible de Metodos lleva acento", () => {
     expect(TOPIC_LABELS.Metodos).toBe("Métodos");
     expect(topicMeta.Metodos.title).toBe("Métodos");
+  });
+
+  it("el título visible es el mismo en Home y en Aprender", () => {
+    // TOPIC_LABELS es el único sitio con los nombres: topicMeta los toma
+    // de ahí, así no vuelve a haber "Control" en un lado y
+    // "Condicionales" en otro.
+    for (const topic of TOPICS)
+      expect(topicMeta[topic].title).toBe(TOPIC_LABELS[topic]);
+  });
+});
+
+// Arreglos de la auditoría 2026-11-08.
+describe("búsqueda sin acentos", () => {
+  // Misma comparación que el buscador de Aprender.
+  const search = (term: string) =>
+    concepts.filter((c) =>
+      normalizeSearch(c.name + c.group + c.summary).includes(
+        normalizeSearch(term),
+      ),
+    );
+  it('"metodos" devuelve "Métodos de string"', () => {
+    expect(search("metodos").map((c) => c.name)).toContain(
+      "Métodos de string",
+    );
+  });
+  it('"Métodos" y "metodos" dan lo mismo', () => {
+    expect(search("Métodos").map((c) => c.name)).toEqual(
+      search("metodos").map((c) => c.name),
+    );
+  });
+});
+
+describe("repaso sin errores", () => {
+  it("createQuiz con lista de repaso vacía no inventa preguntas", () => {
+    // Con 0 errores los botones no navegan (y App lo bloquea): el quiz
+    // vacío no se abre.
+    expect(createQuiz("basic", undefined, [])).toEqual([]);
   });
 });
