@@ -67,6 +67,10 @@ export function Onboarding() {
   const [backupStatus, setBackupStatus] = useState(
     "El código funciona como una copia portátil de tus datos.",
   );
+  // Restaurado con éxito: se muestra la confirmación y el usuario decide
+  // cuándo entrar; antes restore() saltaba a Home al instante y el
+  // mensaje se desmontaba sin verse.
+  const [restored, setRestored] = useState(false);
   const submitName = () => {
     const clean = normalizeUsername(name);
     setName(clean);
@@ -79,8 +83,11 @@ export function Onboarding() {
     setError("");
     setStep(2);
   };
-  const restoreData = () =>
-    setBackupStatus(tryRestore(restore, backup));
+  const restoreData = () => {
+    const message = tryRestore(restore, backup);
+    setBackupStatus(message);
+    if (message.startsWith("Datos")) setRestored(true);
+  };
   if (step === 0)
     return (
       <Shell
@@ -91,7 +98,7 @@ export function Onboarding() {
           </>
         }
       >
-        <div className="onboard-content">
+        <div className="onboard-content onboard-content--top">
           <p className="eyebrow">RECALL</p>
           <h1>Bienvenido.</h1>
           <p>
@@ -149,11 +156,17 @@ export function Onboarding() {
             </div>
           </div>
         </div>
-        <div className="onboard-actions split">
-          <button className="text-action" onClick={() => setStep(0)}>
-            Cancelar
-          </button>
-          <NextButton onClick={restoreData}>Restaurar</NextButton>
+        <div className={restored ? "onboard-actions" : "onboard-actions split"}>
+          {restored ? (
+            <NextButton onClick={finishOnboarding}>Continuar</NextButton>
+          ) : (
+            <>
+              <button className="text-action" onClick={() => setStep(0)}>
+                Cancelar
+              </button>
+              <NextButton onClick={restoreData}>Restaurar</NextButton>
+            </>
+          )}
         </div>
       </Shell>
     );

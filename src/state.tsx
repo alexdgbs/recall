@@ -156,7 +156,9 @@ export function RecallProvider({ children }: { children: ReactNode }) {
         const restored = cleanReferences(migrateState(input));
         if (!isValidUsername(restored.profile.name))
           throw new Error("Respaldo inválido");
-        commit(() => ({ ...restored, onboarded: true }));
+        // No se toca onboarded: en Perfil ya es true, y en Onboarding el
+        // salto a Home lo decide esa pantalla tras ver la confirmación.
+        commit((s) => ({ ...restored, onboarded: s.onboarded }));
       },
       reset: () => {
         try {
