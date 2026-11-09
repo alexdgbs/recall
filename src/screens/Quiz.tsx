@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { concepts, questions, type Difficulty, type Question } from "../data";
 import { useRecall } from "../state";
 import { Icon } from "../components/Icon";
@@ -19,6 +19,13 @@ export function Quiz({
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(0);
   const finished = useRef(false);
+  const nextRef = useRef<HTMLButtonElement>(null);
+  // Al responder, la explicación y Continuar quedan debajo del borde:
+  // se desplaza lo mínimo para que el botón quede visible.
+  useEffect(() => {
+    if (choice !== null)
+      nextRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [choice]);
   const close = () => {
     if (answered > 0 && !finished.current) finishSession();
     onClose();
@@ -125,6 +132,7 @@ export function Quiz({
         </div>
       )}
       <button
+        ref={nextRef}
         className={`white-btn next-btn ${choice !== null ? "show" : ""}`}
         onClick={next}
       >

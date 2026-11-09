@@ -2,16 +2,29 @@ import { useRef, useState, type KeyboardEvent } from "react";
 import { challenges } from "../data";
 import { MAX_CODE_CHARS } from "../config";
 import { useRecall } from "../state";
+import { findChallenge } from "../domain";
 import { runCode, type TestResult } from "../services/codeRunner";
 import { Back, formatValue, label } from "./shared";
 
-export function CodeMode({ onClose }: { onClose: () => void }) {
+export function CodeMode({
+  onClose,
+  initialId,
+}: {
+  onClose: () => void;
+  initialId?: string;
+}) {
   const { state, registerCodeAttempt, saveCodeDraft, clearCodeDraft } =
     useRecall();
-  const list = challenges.filter(
-    (c) => c.difficulty === state.settings.difficulty,
-  );
-  const [index, setIndex] = useState(0);
+  // Desde la lista se abre un reto concreto; si no, el primero de la
+  // dificultad activa. La dificultad queda fijada al entrar: el componente
+  // se desmonta al salir, así que no hace falta guardarla en estado.
+  const start = initialId ? findChallenge(initialId) : undefined;
+  const difficulty = start?.difficulty ?? state.settings.difficulty;
+  const list = challenges.filter((c) => c.difficulty === difficulty);
+  const [index, setIndex] = useState(() => {
+    const i = start ? list.findIndex((c) => c.id === start.id) : -1;
+    return i >= 0 ? i : 0;
+  });
   const challenge = list[index];
   // Borradores por reto: cambiar de reto no tira lo escrito; al volver,
   // cada reto muestra su último código, no el template. El ref es la

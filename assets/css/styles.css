@@ -10,6 +10,10 @@
   --bad: #ff9ca5;
   --accent: #f2f3f5;
   --safe-bottom: max(16px, env(safe-area-inset-bottom));
+  /* Franja que ocupa la barra inferior: 72px de barra (botón 58 +
+     padding 6 + 6 + borde 2) más su separación del borde. El contenedor
+     con scroll termina ahí arriba, así nada queda debajo de la barra. */
+  --nav-strip: calc(72px + var(--safe-bottom));
   --radius-sm: 14px;
   --radius-md: 18px;
   --radius-lg: 22px;
@@ -92,8 +96,14 @@ button {
   transform-origin: top left;
 }
 .phone .screen {
-  height: 100%;
+  /* Con barra: el scroll termina en su borde superior, no debajo de
+     ella; sin barra (quiz, código, onboarding) usa todo el alto. */
+  height: calc(100% - var(--nav-strip));
   min-height: 0;
+}
+.phone .screen.no-nav,
+.phone .screen.onboarding {
+  height: 100%;
 }
 .showcase-editorial {
   width: min(300px, 100%);
@@ -167,14 +177,14 @@ button {
 .screen {
   display: none;
   height: 100%;
-  padding: 24px 20px 112px;
+  /* Abajo solo aire (24px): la barra ya no se come el contenido, la
+     franja la reserva la altura de .phone .screen. Antes eran 112px y
+     aun así en reposo la barra tapaba lo que caía en su zona. */
+  padding: 24px 20px;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
   scrollbar-color: #555 transparent;
-}
-.screen.no-nav {
-  padding-bottom: 24px;
 }
 .screen::-webkit-scrollbar {
   width: 5px;
@@ -188,9 +198,6 @@ button {
 }
 .screen.active {
   display: block;
-}
-.screen.onboarding {
-  padding-bottom: 24px;
 }
 .eyebrow {
   margin: 0;
@@ -701,6 +708,8 @@ svg {
   bottom: var(--safe-bottom);
   z-index: 30;
   width: min(calc(100% - 22px), 458px);
+  /* Altura fija (ver --nav-strip): si cambia, cambia la franja. */
+  height: 72px;
   padding: 6px;
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -1439,6 +1448,44 @@ pre {
   gap: 10px;
   margin-top: 12px;
 }
+/* Lista de retos: una fila por reto, con su estado a la derecha. */
+.challenge-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+.challenge-row {
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--panel);
+  color: var(--text);
+  text-align: left;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.challenge-row:hover {
+  background: #22262d;
+}
+.challenge-row strong {
+  display: block;
+  font-size: 15px;
+}
+.challenge-row small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: var(--text-xs);
+}
+.tag.done {
+  color: var(--ok);
+  border-color: rgba(168, 239, 196, 0.55);
+}
 .settings-card {
   margin-top: 12px;
   padding: 16px;
@@ -1550,7 +1597,9 @@ button:disabled {
     transform: none;
   }
   .phone .screen {
-    height: 100%;
+    /* Igual que fuera del media query: el scroll termina arriba de la
+       barra, también a ancho de teléfono. */
+    height: calc(100% - var(--nav-strip));
   }
   .storage-notice {
     position: fixed;

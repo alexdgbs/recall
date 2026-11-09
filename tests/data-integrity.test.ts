@@ -3,6 +3,8 @@ import { challenges, concepts, questions, type Difficulty } from "../src/data";
 import {
   TOPICS,
   TOPIC_LABELS,
+  challengeProgress,
+  findChallenge,
   localDate,
   migrateState,
   normalizeSearch,
@@ -177,6 +179,33 @@ describe("temas", () => {
 });
 
 // Arreglos de la auditoría 2026-11-08.
+describe("retos: lista y progreso", () => {
+  it("son 9 retos, 3 por dificultad", () => {
+    expect(challenges).toHaveLength(9);
+    for (const d of DIFFICULTIES)
+      expect(
+        challenges.filter((c) => c.difficulty === d),
+        d,
+      ).toHaveLength(3);
+  });
+
+  it("challengeProgress cuenta solo retos que existen", () => {
+    expect(
+      challengeProgress(["flatten-one", "two-sum", "no-existe"]),
+    ).toEqual({ done: 2, total: 9 });
+    expect(challengeProgress([])).toEqual({ done: 0, total: 9 });
+    expect(
+      challengeProgress(challenges.map((c) => c.id)),
+    ).toEqual({ done: 9, total: 9 });
+  });
+
+  it("findChallenge devuelve el reto por id y undefined si no existe", () => {
+    expect(findChallenge("flatten-one")?.title).toBe("Aplana un nivel");
+    expect(findChallenge("flatten-one")?.difficulty).toBe("technical");
+    expect(findChallenge("no-existe")).toBeUndefined();
+  });
+});
+
 describe("búsqueda sin acentos", () => {
   // Misma comparación que el buscador de Aprender.
   const search = (term: string) =>

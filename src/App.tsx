@@ -3,6 +3,7 @@ import "../assets/css/styles.css";
 import { PHONE_HEIGHT, PHONE_WIDTH } from "./config";
 import { useRecall } from "./state";
 import {
+  ChallengeList,
   CodeMode,
   Home,
   Learn,
@@ -22,6 +23,15 @@ export default function App() {
   const [quiz, setQuiz] = useState<{ pool: Question[]; title: string } | null>(
     null,
   );
+  // Editor de retos: qué reto abrir y a dónde vuelve Volver (Practicar o
+  // la lista, según desde dónde se abrió).
+  const [codeTarget, setCodeTarget] = useState<string | undefined>(undefined);
+  const [codeReturn, setCodeReturn] = useState<View>("practice");
+  const openCode = (id?: string, from: View = "practice") => {
+    setCodeTarget(id);
+    setCodeReturn(from);
+    setView("code");
+  };
   // Escala del marco de teléfono en escritorio: se calcula con el tamaño de
   // la ventana y se pasa como estilo de React, sin tocar el DOM a mano.
   const [wide, setWide] = useState(
@@ -80,7 +90,12 @@ export default function App() {
     ) : view === "learn" ? (
       <Learn />
     ) : view === "practice" ? (
-      <Practice go={setView} startQuiz={startQuiz} />
+      <Practice go={setView} startQuiz={startQuiz} openCode={() => openCode()} />
+    ) : view === "challenges" ? (
+      <ChallengeList
+        go={setView}
+        openChallenge={(id) => openCode(id, "challenges")}
+      />
     ) : view === "quiz" && quiz ? (
       <Quiz
         pool={quiz.pool}
@@ -88,7 +103,13 @@ export default function App() {
         onClose={() => setView("practice")}
       />
     ) : view === "code" ? (
-      <CodeMode onClose={() => setView("practice")} />
+      <CodeMode
+        initialId={codeTarget}
+        onClose={() => {
+          setCodeTarget(undefined);
+          setView(codeReturn);
+        }}
+      />
     ) : (
       <Profile go={setView} />
     );
@@ -114,7 +135,11 @@ export default function App() {
             </div>
           )}
           {!["quiz", "code"].includes(view) && (
-            <BottomNav view={view} go={setView} />
+            // La lista de retos es parte de Practicar: ese botón queda activo.
+            <BottomNav
+              view={view === "challenges" ? "practice" : view}
+              go={setView}
+            />
           )}
         </main>
       </div>

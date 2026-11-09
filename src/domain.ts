@@ -54,6 +54,14 @@ export interface RecallState {
 }
 export const topicLabel = (group: string) =>
   (TOPIC_LABELS as Record<string, string>)[group] ?? group;
+// Retos: cuántos de los 9 están completados (solo ids que existen).
+export const challengeProgress = (completed: readonly string[]) => {
+  const done = challenges.filter((c) => completed.includes(c.id)).length;
+  return { done, total: challenges.length };
+};
+// Reto por id, para abrirlo directo desde la lista.
+export const findChallenge = (id: string) =>
+  challenges.find((c) => c.id === id);
 // Búsqueda sin acentos: "metodos" encuentra "Métodos de string".
 export const normalizeSearch = (value: string) =>
   value

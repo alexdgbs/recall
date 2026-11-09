@@ -4,7 +4,14 @@ import { topicLabel } from "../domain";
 import { readBackup } from "../services/backup";
 import { Icon, type IconName } from "../components/Icon";
 
-export type View = "home" | "learn" | "practice" | "quiz" | "code" | "profile";
+export type View =
+  | "home"
+  | "learn"
+  | "practice"
+  | "challenges"
+  | "quiz"
+  | "code"
+  | "profile";
 export const label = (value: Difficulty) =>
   value === "technical"
     ? "Prueba técnica"

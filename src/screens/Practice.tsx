@@ -1,15 +1,23 @@
 import type { Difficulty } from "../data";
 import { useRecall } from "../state";
+import { challengeProgress } from "../domain";
 import { Arrow, label, type View } from "./shared";
 
 export function Practice({
   go,
   startQuiz,
+  openCode,
 }: {
   go: (view: View) => void;
   startQuiz: (topic?: string, review?: boolean) => void;
+  openCode: () => void;
 }) {
   const { state, streak, setDifficulty } = useRecall();
+  // Progreso de retos: sale del estado guardado, no de la dificultad
+  // activa, así la tarjeta se ve igual en las 3 dificultades y tras
+  // recargar. Antes no había tarjeta: el único "N listos" vivía en el
+  // encabezado de Código Real, solo dentro de un reto.
+  const { done, total } = challengeProgress(state.codeStats.completed);
   return (
     <section className="screen active">
       <p className="eyebrow">PRACTICAR</p>
@@ -57,10 +65,16 @@ export function Practice({
           onClick={() => startQuiz(undefined, true)}
         />
         <Mode
+          title={`${done} de ${total} listos`}
+          eyebrow="RETOS DE CÓDIGO"
+          copy="Ver los 9 retos por dificultad y su estado."
+          onClick={() => go("challenges")}
+        />
+        <Mode
           title="Escribe y ejecuta tests"
           eyebrow="CÓDIGO REAL"
           copy="Completa una función y prueba casos normales y extremos."
-          onClick={() => go("code")}
+          onClick={openCode}
         />
       </div>
       <div className="notice">
